@@ -1,0 +1,457 @@
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable< DriversWebshop.Dnn.Dnn.DriversWebshop.ShowScore.Models.Item >>
+
+@using System.Text.RegularExpressions
+@using DotNetNuke.Web.Mvc.Helpers
+
+
+<div id="Items-@Dnn.ModuleContext.ModuleId">
+    @*@if (Model.Count() == 0)
+        {
+            <p>@Dnn.LocalizeString("NoItems")</p>
+        }
+        else
+        {
+            <ul class="tm_tl">
+                @foreach (var item in Model)
+                {
+                    <li class="tm_t">
+                        <h3>@item.ItemName</h3>
+                        <div class="tm_td">@item.ItemDescription</div>
+                        @{
+                            if (Dnn.ModuleContext.IsEditable)
+                            {
+                                <div>
+                                    <a href="@Url.Action("Edit", "Item", new {ctl = "Edit", itemId = item.ItemId})">@Dnn.LocalizeString("EditItem")</a>
+                                    <a href="@Url.Action("Delete", "Item", new {itemId = item.ItemId})">@Dnn.LocalizeString("DeleteItem")</a>
+                                </div>
+                            }
+                        }
+                    </li>
+                }
+            </ul>
+        }*@
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #calculator {
+            flex: 1;
+            padding: 20px;
+        }
+
+        select {
+            color: black;
+            background-color: white;
+        }
+
+        option {
+            color: black;
+            background-color: white;
+        }
+
+        button {
+            color: black;
+            background-color: white;
+            border: 1px solid #000;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #explanation-container {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .game {
+            margin-top: 20px;
+        }
+
+        .game img {
+            max-width: 100px;
+            display: block;
+        }
+
+        #recommended-games {
+            display: none;
+        }
+    </style>
+    <div id="calculator">
+        <h1>PC Hardver Pontszám</h1>
+        <form id="hardware-form">
+            <label for="cpu">Válasssz processzort:</label>
+            <select id="cpu" name="cpu">
+                <!-- CPU options will be populated here -->
+            </select>
+            <br><br>
+            <label for="gpu">Válassz videókártyát:</label>
+            <select id="gpu" name="gpu">
+                <!-- GPU options will be populated here -->
+            </select>
+            <br><br>
+            <label for="ram">Válasssz memóriát:</label>
+            <select id="ram" name="ram">
+                <!-- RAM options will be populated here -->
+            </select>
+            <br><br>
+            <button type="button" onclick="calculateScore()">Pontszám számítása</button>
+        </form>
+        <h2 id="score">Pontszám: </h2>
+    </div>
+    
+    <div id="explanation-container">
+        <p id="explanation"></p>
+        <div id="recommended-games">
+            <h3>Ajánlott játékok:</h3>
+            <div class="game">
+                <a href="http://20.234.113.211:8085/Term%C3%A9kadatok/dirt-3" target="_blank">
+                    <img src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/718f7bb4-65f2-46a1-af4f-5eabc2fe96ff/medium/img_G9718856.png" alt="Dirt 3">
+                    Dirt 3
+                </a>
+            </div>
+            <div class="game">
+                <a href="http://20.234.113.211:8085/Term%C3%A9kadatok/metal-gear-solid" target="_blank">
+                    <img src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/d8da8165-0d63-4274-81f9-0515b139b057/medium/img_G5764922.png" alt="Metal Gear Solid">
+                    Metal Gear Solid
+                </a>
+            </div>
+            <div class="game">
+                <a href="http://20.234.113.211:8085/Term%C3%A9kadatok/rocket-horizon" target="_blank">
+                    <img src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/0cac4c10-817e-4fde-9263-003e91f5147a/medium/img_G9760662.png" alt="Rocket Horizon">
+                    Rocket Horizon
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cpuData = {
+            "Intel Core i9-14900K": 1.0000,
+            "Intel Core i9-14900KF": 0.9955,
+            "Intel Core i9-13900KS": 0.9915,
+            "Intel Core i9-13900K": 0.9720,
+            "Intel Core i9-13900KF": 0.9715,
+            "AMD Ryzen 9 7950X": 0.9435,
+            "Intel Core i9-13900": 0.9010,
+            "Intel Core i7-14700K": 0.8780,
+            "Intel Core i9-13900F": 0.8624,
+            "AMD Ryzen 9 7950X3D": 0.8528,
+            "AMD Ryzen 9 7900X": 0.7586,
+            "Intel Core i7-13700K": 0.7489,
+            "Intel Core i7-13700KF": 0.7480,
+            "Intel Core i9-12900KS": 0.7227,
+            "Intel Core i7-13700": 0.7093,
+            "AMD Ryzen 9 5950X": 0.7008,
+            "Intel Core i7-13700F": 0.7008,
+            "Intel Core i9-12900K": 0.6936,
+            "Intel Core i9-12900KF": 0.6915,
+            "AMD Ryzen 9 7900X3D": 0.6889,
+            "AMD Ryzen 9 7900": 0.6596,
+            "Intel Core i9-12900F": 0.6469,
+            "Intel Core i9-10980XE Extreme Edition": 0.6428,
+            "AMD Ryzen 9 3950X": 0.6404,
+            "Intel Core i5  14600KF": 0.6299,
+            "Intel Core i5  14600K": 0.6287,
+            "Intel Core i5-13600K": 0.6120,
+            "Intel Core i5-13600KF": 0.6116,
+            "AMD Ryzen 9 5900X": 0.6041,
+            "Intel Core i7-12700KF": 0.5965,
+            "Intel Core i7-12700K": 0.5958,
+            "Intel Core i7-12700F": 0.5644,
+            "Intel Core i7-12700": 0.5640,
+            "Intel Core i5-13500": 0.5387,
+            "AMD Ryzen 7 7700X": 0.5339,
+            "Intel Core i9-10900K": 0.5327,
+            "Intel Core i9-10900KF": 0.5307,
+            "Intel Core i9-10850K": 0.5217,
+            "AMD Ryzen 9 3900X": 0.5094,
+            "AMD Ryzen 9 3900XT": 0.5089,
+            "AMD Ryzen 7 7700": 0.5067,
+            "Intel Core i9-11900K": 0.4987,
+            "Intel Core i9-11900KF": 0.4980,
+            "Intel Core i7-11700K": 0.4831,
+            "Intel Core i7-11700KF": 0.4821,
+            "Intel Core i5-12600K": 0.4753,
+            "AMD Ryzen 9 3900": 0.4750,
+            "AMD Ryzen 7 7800X3D": 0.4748,
+            "Intel Core i5-12600KF": 0.4740,
+            "Intel Core i7-11700": 0.4567,
+            "Intel Core i7-11700F": 0.4543,
+            "Intel Core i9-11900KB": 0.4539,
+            "AMD Ryzen 7 5800X": 0.4525,
+            "Intel Core i5-13490F": 0.4492,
+            "Intel Core i9-10900X X-series": 0.4390,
+            "Intel Core i5-13400F": 0.4355,
+            "Intel Core i5-13400": 0.4354,
+            "AMD Ryzen 7 5800X3D": 0.4325,
+            "Intel Core i9-9900KS": 0.4325,
+            "Intel Core i7-10700K": 0.4322,
+            "Intel Core i7-10700KF": 0.4319,
+            "AMD Ryzen 7 5800": 0.4220,
+            "Intel Core i9-9900KF": 0.4188,
+            "Intel Core i9-9900K": 0.4172,
+            "AMD Ryzen 5 7600X": 0.4147,
+            "Intel Core i9-7900X": 0.4141,
+            "Intel Core i7-10700": 0.4116,
+            "AMD Ryzen 7 5700X": 0.4098,
+            "Intel Core i7-10700F": 0.4093,
+            "AMD Ryzen 7 5700G": 0.3968,
+            "AMD Ryzen 5 7600": 0.3920,
+            "AMD Ryzen 5 7500F": 0.3823,
+            "AMD Ryzen 7 3800XT": 0.3768,
+            "Intel Core i5-11600K": 0.3748,
+            "Intel Core i5-11600KF": 0.3740,
+            "AMD Ryzen 7 3800X": 0.3680,
+            "Intel Core i5-12500": 0.3601,
+            "Intel Core i7-6950X": 0.3600,
+            "AMD Ryzen 7 3700X": 0.3587,
+            "Intel Core i7-7820X": 0.3532,
+            "Intel Core i5-12490F": 0.3530,
+            "Intel Core i5-12400F": 0.3524,
+            "Intel Core i5-12400": 0.3520,
+            "Intel Core i7-9700KF": 0.3482,
+            "Intel Core i7-9700K": 0.3479,
+            "Intel Core i5-11400": 0.3391,
+            "Intel Core i5-11400F": 0.3390,
+            "AMD Ryzen 5 5600X": 0.3364,
+            "AMD Ryzen 5 5600": 0.3357,
+            "AMD Ryzen 5 5600G": 0.3273,
+            "AMD Ryzen 5 5500": 0.3231,
+            "Intel Core i5-10600K": 0.3201,
+            "Intel Core i5-10600KF": 0.3200,
+            "Intel Core i7-9700F": 0.3097,
+            "Intel Core i7-9700": 0.3065,
+            "AMD Ryzen 7 6800U": 0.3064,
+            "Intel Core i7-8700K": 0.3008,
+            "Intel Core i7-8086K": 0.2990,
+            "AMD Ryzen 5 3600XT": 0.2898,
+            "Intel Core i7-8700": 0.2872,
+            "AMD Ryzen 5 4500": 0.2859,
+            "AMD Ryzen 7 2700X": 0.2846,
+            "Intel Core i5-10400F": 0.2826,
+            "Intel Core i5-10400": 0.2817,
+            "AMD Ryzen 5 3600X": 0.2806,
+            "AMD Ryzen 5 3600": 0.2747,
+            "Intel Core i5-1240P": 0.2708,
+            "AMD Ryzen 7 1800X": 0.2665,
+            "Intel Core i7-1260P": 0.2659,
+            "Intel Core i5-9600KF": 0.2547,
+            "Intel Core i5-9600K": 0.2521,
+            "AMD Ryzen 7 1700X": 0.2521,
+            "AMD Ryzen 7 2700": 0.2452,
+            "Intel Core i5-8600K": 0.2443,
+            "Intel Core i3-12100F": 0.2393,
+            "Intel Core i3-12100": 0.2391,
+            "AMD Ryzen 7 1700": 0.2311,
+            "AMD Ryzen 5 3500X": 0.2288,
+            "Intel Core i5-9400F": 0.2227,
+            "Intel Core i5-8500": 0.2226,
+            "AMD Ryzen 5 2600X": 0.2171,
+            "Intel Core i5-8400": 0.2168,
+            "Intel Core i7-5820K": 0.2100,
+            "Intel Core i7-7700K": 0.2059,
+            "AMD Ryzen 5 1600X": 0.2056,
+            "AMD Ryzen 5 2600": 0.2053,
+            "Intel Core i3-10105F": 0.1938,
+            "Intel Core i7-6700K": 0.1922,
+            "AMD Ryzen 5 1600": 0.1893,
+            "Intel Core i3-10100F": 0.1888,
+            "Intel Core i7-7700": 0.1815,
+            "Intel Core i5-1135G7": 0.1714,
+            "Intel Core i7-1165G7": 0.1714,
+            "Intel Core i7-6700": 0.1676,
+            "Intel Core i7-4790K": 0.1667,
+            "Intel Core i5-7600K": 0.1606,
+            "Intel Core i5-6600K": 0.1538,
+            "Intel Core i7-4770K": 0.1507,
+            "Intel Core i7-4790": 0.1447,
+            "Intel Core i7-4770": 0.1402,
+            "Intel Core i5-7500": 0.1360,
+            "Intel Core i7-3770K": 0.1273,
+            "Intel Core i5-4690K": 0.1261,
+            "Intel Core i5-6500": 0.1252,
+            "Intel Core i7-3770": 0.1177,
+            "AMD FX-8350": 0.0793
+        };
+
+        const gpuData = {
+            "Nvidia GeForce RTX 4090": 1.000,
+            "AMD Radeon RX 7900 XTX": 0.972,
+            "Nvidia GeForce RTX 4080 Super": 0.985,
+            "Nvidia GeForce RTX 4080": 0.981,
+            "AMD Radeon RX 7900 XT": 0.958,
+            "Nvidia GeForce RTX 4070 Ti Super": 0.968,
+            "Nvidia GeForce RTX 4070 Ti": 0.957,
+            "AMD Radeon RX 7900 GRE": 0.941,
+            "Nvidia GeForce RTX 4070 Super": 0.946,
+            "AMD Radeon RX 6950 XT": 0.917,
+            "Nvidia GeForce RTX 3090 Ti": 0.905,
+            "AMD Radeon RX 7800 XT": 0.915,
+            "Nvidia GeForce RTX 3090": 0.889,
+            "AMD Radeon RX 6900 XT": 0.896,
+            "Nvidia GeForce RTX 3080 Ti": 0.878,
+            "AMD Radeon RX 6800 XT": 0.885,
+            "Nvidia GeForce RTX 3080 12GB": 0.865,
+            "Nvidia GeForce RTX 4070": 0.907,
+            "Nvidia GeForce RTX 3080": 0.856,
+            "AMD Radeon RX 7700 XT": 0.877,
+            "AMD Radeon RX 6800": 0.862,
+            "Nvidia GeForce RTX 3070 Ti": 0.816,
+            "AMD Radeon RX 6750 XT": 0.826,
+            "Nvidia GeForce RTX 4060 Ti 16GB": 0.826,
+            "Nvidia GeForce RTX 4060 Ti": 0.818,
+            "Nvidia Titan RTX": 0.800,
+            "AMD Radeon RX 6700 XT": 0.808,
+            "Nvidia GeForce RTX 3070": 0.791,
+            "Nvidia GeForce RTX 2080 Ti": 0.772,
+            "AMD Radeon RX 7600 XT": 0.773,
+            "Nvidia GeForce RTX 3060 Ti": 0.750,
+            "AMD Radeon RX 6700 10GB": 0.744,
+            "Nvidia GeForce RTX 2080 Super": 0.722,
+            "Nvidia GeForce RTX 4060": 0.727,
+            "Nvidia GeForce RTX 2080": 0.698,
+            "AMD Radeon RX 7600": 0.723,
+            "AMD Radeon RX 6650 XT": 0.700,
+            "Nvidia GeForce RTX 2070 Super": 0.662,
+            "Intel Arc A770 16GB": 0.594,
+            "Intel Arc A770 8GB": 0.590,
+            "AMD Radeon RX 6600 XT": 0.682,
+            "AMD Radeon RX 5700 XT": 0.638,
+            "Nvidia GeForce RTX 3060": 0.618,
+            "Intel Arc A750": 0.564,
+            "Nvidia GeForce RTX 2070": 0.608,
+            "AMD Radeon VII": 0.582,
+            "Nvidia GeForce GTX 1080 Ti": 0.563,
+            "Nvidia GeForce RTX 2060 Super": 0.572,
+            "AMD Radeon RX 6600": 0.593,
+            "Intel Arc A580": 0.516,
+            "AMD Radeon RX 5700": 0.566,
+            "AMD Radeon RX 5600 XT": 0.511,
+            "AMD Radeon RX Vega 64": 0.482,
+            "Nvidia GeForce RTX 2060": 0.514,
+            "Nvidia GeForce GTX 1080": 0.459,
+            "Nvidia GeForce RTX 3050": 0.454,
+            "Nvidia GeForce GTX 1070 Ti": 0.438,
+            "AMD Radeon RX Vega 56": 0.430,
+            "Nvidia GeForce GTX 1660 Super": 0.437,
+            "Nvidia GeForce GTX 1660 Ti": 0.433,
+            "Nvidia GeForce GTX 1070": 0.383,
+            "Nvidia GeForce GTX 1660": 0.397,
+            "AMD Radeon RX 5500 XT 8GB": 0.368,
+            "AMD Radeon RX 590": 0.350,
+            "Nvidia GeForce GTX 980 Ti": 0.320,
+            "AMD Radeon RX 580 8GB": 0.315,
+            "AMD Radeon R9 Fury X": 0.326,
+            "Nvidia GeForce GTX 1650 Super": 0.346,
+            "AMD Radeon RX 5500 XT 4GB": 0.341,
+            "Nvidia GeForce GTX 1060 6GB": 0.295,
+            "AMD Radeon RX 6500 XT": 0.336,
+            "AMD Radeon R9 390": 0.261,
+            "Nvidia GeForce GTX 980": 0.274,
+            "Nvidia GeForce GTX 1650 GDDR6": 0.289,
+            "Intel Arc A380": 0.277,
+            "AMD Radeon RX 570 4GB": 0.274,
+            "Nvidia GeForce GTX 1650": 0.262,
+            "Nvidia GeForce GTX 970": 0.250,
+            "AMD Radeon RX 6400": 0.261,
+            "Nvidia GeForce GTX 1050 Ti": 0.194,
+            "Nvidia GeForce GTX 1060 3GB": 0.268,
+            "Nvidia GeForce GTX 1630": 0.173,
+            "AMD Radeon RX 560 4GB": 0.162,
+            "Nvidia GeForce GTX 1050": 0.152,
+            "AMD Radeon RX 550 4GB": 0.100,
+            "Nvidia GeForce GT 1030": 0.075
+        };
+
+        const ramData = {
+            "DDR3-800": 0.0256,
+            "DDR3-1066": 0.0513,
+            "DDR3-1333": 0.0769,
+            "DDR3-1375": 0.1026,
+            "DDR3-1600": 0.1282,
+            "DDR4-1600": 0.1538,
+            "DDR3-1625": 0.1795,
+            "DDR3-1800": 0.2051,
+            "DDR3-1866": 0.2308,
+            "DDR3-1866": 0.2564,
+            "DDR4-1866": 0.2821,
+            "DDR3-2000": 0.3077,
+            "DDR3-2133": 0.3333,
+            "DDR4-2133": 0.3590,
+            "DDR3-2200": 0.3846,
+            "DDR3-2400": 0.4103,
+            "DDR4-2400": 0.4359,
+            "DDR3-2600": 0.4615,
+            "DDR3-2666": 0.4872,
+            "DDR4-2666": 0.5128,
+            "DDR3-2800": 0.5385,
+            "DDR4-2800": 0.5641,
+            "DDR4-3000": 0.5897,
+            "DDR4-3200": 0.6154,
+            "DDR4-3300": 0.6410,
+            "DDR4-3333": 0.6667,
+            "DDR4-3400": 0.6923,
+            "DDR5-4000": 0.7179,
+            "DDR5-4400": 0.7436,
+            "DDR5-4800": 0.7692,
+            "DDR5-5200": 0.7949,
+            "DDR5-5600": 0.8205,
+            "DDR5-6000": 0.8462,
+            "DDR5-6200": 0.8718,
+            "DDR5-6400": 0.8974,
+            "DDR5-6800": 0.9231,
+            "DDR5-7200": 0.9487,
+            "DDR5-7600": 0.9744,
+            "DDR5-8000": 1.0000
+        };
+
+        const explanations = [
+            { threshold: 0.25, text: "Teljesítmény Bracket: Nagyon Alacsony\nEz a hardverkombináció nem ajánlott modern alkalmazások és játékok futtatására. A rendszert valószínűleg csak alapvető feladatokra lehet használni, mint például böngészés vagy szövegszerkesztés." },
+            { threshold: 0.50, text: "Teljesítmény Bracket: Alacsony\nEz a hardverkombináció alapszintű teljesítményt nyújt. Alkalmas lehet egyszerűbb feladatok elvégzésére, mint például irodai alkalmazások, böngészés és alapvető multimédiás használat, de modern játékok és erőforrásigényes alkalmazások esetén korlátozásokba ütközhet." },
+            { threshold: 0.75, text: "Teljesítmény Bracket: Közepes\nEz a hardverkombináció megfelelő teljesítményt nyújt a legtöbb általános feladathoz, beleértve a közepes igényű játékokat és alkalmazásokat is. Bár a legújabb játékok és erőforrásigényes alkalmazások esetén kompromisszumokra lehet szükség a beállítások terén, a rendszer általánosan jó használhatóságot biztosít." },
+            { threshold: 1.00, text: "Teljesítmény Bracket: Magas\nEz a hardverkombináció kiváló teljesítményt nyújt, és képes kezelni a legújabb játékokat és erőforrásigényes alkalmazásokat is magas beállítások mellett. Ideális választás mind játékosok, mind professzionális felhasználók számára, akik maximális teljesítményt igényelnek." }
+        ];
+
+        // Function to populate dropdown lists
+        function populateDropdown(dropdownId, data) {
+            const dropdown = document.getElementById(dropdownId);
+            for (let item in data) {
+                let option = document.createElement("option");
+                option.value = data[item];
+                option.text = item;
+                dropdown.appendChild(option);
+            }
+        }
+
+        // Populate the dropdowns on page load
+        window.onload = function () {
+            populateDropdown("cpu", cpuData);
+            populateDropdown("gpu", gpuData);
+            populateDropdown("ram", ramData);
+        };
+
+        // Function to calculate the score
+        function calculateScore() {
+            const cpuScore = parseFloat(document.getElementById("cpu").value) * 0.3;
+            const gpuScore = parseFloat(document.getElementById("gpu").value) * 0.6;
+            const ramScore = parseFloat(document.getElementById("ram").value) * 0.1;
+            const totalScore = cpuScore + gpuScore + ramScore;
+
+            document.getElementById("score").innerText = `Pontszám: ${(totalScore * 100).toFixed(2)}%`;
+
+            // Determine the explanation text based on the score
+            let explanationText = "";
+            for (let explanation of explanations) {
+                if (totalScore <= explanation.threshold) {
+                    explanationText = explanation.text;
+                    break;
+                }
+            }
+
+            document.getElementById("explanation").innerText = explanationText;
+
+            document.getElementById("recommended-games").style.display = 'block';
+        }
+    </script>
+</div>
