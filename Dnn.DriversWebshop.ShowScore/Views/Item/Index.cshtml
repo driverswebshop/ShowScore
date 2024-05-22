@@ -41,24 +41,6 @@
             padding: 20px;
         }
 
-        select {
-            color: black;
-            background-color: white;
-        }
-
-        option {
-            color: black;
-            background-color: white;
-        }
-
-        button {
-            color: black;
-            background-color: white;
-            border: 1px solid #000;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
         #explanation-container {
             flex: 1;
             padding: 20px;
@@ -68,58 +50,195 @@
             margin-top: 20px;
         }
 
-        .game img {
-            max-width: 100px;
-            display: block;
-        }
-
         #recommended-games {
             display: none;
         }
+
+        div.modul-container{
+
+        background: #383838;
+
+        text-align:center;
+        }
+
+        label.modul-input_text{
+
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 24px;
+
+            color: #FFFFFF;
+        }
+
+        select.modul-input{
+            height:40px;
+            min-width:230px;
+
+            text-align:center;
+            color:white;
+            background: #383838;
+            box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+        }
+
+        option.modul-option{
+            width: 280px;
+            height: 44px;
+
+            background: #383838;
+
+            flex: none;
+            order: 0;
+            align-self: stretch;
+            flex-grow: 0;
+        }
+
+        button.modul-button{
+            display: flex;
+
+            margin:auto;
+
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 20px;
+            gap: 20px;
+
+            background: #C94DAE;
+            border-radius: 20px;
+        }
+
+        div#recommended-games{
+            text-align:center;
+        }
+
+        div.modul-card{
+            margin-left:auto;
+            margin-right:auto;
+            margin-top:20px;
+            width:300px;
+            text-align:center;
+            padding:20px;
+
+            background: #383838;
+            box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        div.modul-card img.modul-card-img{
+
+            background: url(image);
+
+            margin:15px;
+
+            max-width:250px;
+        }
+
+        div.modul-card p.modul-card-title{
+
+            margin:10px;
+
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 24px;
+            text-align: center;
+
+            color: #FFFFFF;
+        }
+
+        div.modul-card p.modul-card-subtitle{
+
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 10px;
+            line-height: 12px;
+            text-align: center;
+
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        h1.modul-title{
+            color:white;
+        }
+
+        h2.modul-point{
+
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 50px;
+            line-height: 116px;
+            text-align: center;
+
+            color: #188A1C;
+        }
+
+        h3.modul-cards-title{
+            text-align:center;
+        }
+
+        p.modul-rating{
+
+            max-width:500px;
+
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 39px;
+            text-align: center;
+
+            color: #188A1C;
+        }
     </style>
-    <div id="calculator">
-        <h1>PC Hardver Pontszám</h1>
+    <div id="calculator" class="modul-container">
+        <h1 class="modul-title">PC Hardver Pontszám</h1>
         <form id="hardware-form">
-            <label for="cpu">Válasssz processzort:</label>
-            <select id="cpu" name="cpu">
+            <label for="cpu" class="modul-input_text">Válasssz processzort:</label>
+            <select id="cpu" name="cpu" class="modul-input">
                 <!-- CPU options will be populated here -->
             </select>
             <br><br>
-            <label for="gpu">Válassz videókártyát:</label>
-            <select id="gpu" name="gpu">
+            <label for="gpu" class="modul-input_text">Válassz videókártyát:</label>
+            <select id="gpu" name="gpu" class="modul-input">
                 <!-- GPU options will be populated here -->
             </select>
             <br><br>
-            <label for="ram">Válasssz memóriát:</label>
-            <select id="ram" name="ram">
+            <label for="ram" class="modul-input_text">Válasssz memóriát:</label>
+            <select id="ram" name="ram" class="modul-input">
                 <!-- RAM options will be populated here -->
             </select>
             <br><br>
-            <button type="button" onclick="calculateScore()">Pontszám számítása</button>
+            <button type="button" class="modul-button" onclick="calculateScore()">Pontszám számítása</button>
         </form>
-        <h2 id="score">Pontszám: </h2>
+        <h2 id="score" class="modul-point">Pontszám: </h2>
     </div>
     
     <div id="explanation-container">
-        <p id="explanation"></p>
+        <p id="explanation" class="modul-rating"></p>
         <div id="recommended-games">
             <h3>Ajánlott játékok:</h3>
-            <div class="game">
+            <div class="game modul-card">
                 <a href="http://20.234.113.211:8085/Term%C3%A9kadatok/dirt-3" target="_blank">
-                    <img src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/718f7bb4-65f2-46a1-af4f-5eabc2fe96ff/medium/img_G9718856.png" alt="Dirt 3">
-                    Dirt 3
+                    <img class="modul-card-img" src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/718f7bb4-65f2-46a1-af4f-5eabc2fe96ff/medium/img_G9718856.png" alt="Dirt 3">
+                    <p class="modul-card-title">Dirt 3</p>
                 </a>
             </div>
-            <div class="game">
+            <div class="game modul-card">
                 <a href="http://20.234.113.211:8085/Term%C3%A9kadatok/metal-gear-solid" target="_blank">
-                    <img src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/d8da8165-0d63-4274-81f9-0515b139b057/medium/img_G5764922.png" alt="Metal Gear Solid">
-                    Metal Gear Solid
+                    <img class="modul-card-img" src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/d8da8165-0d63-4274-81f9-0515b139b057/medium/img_G5764922.png" alt="Metal Gear Solid">
+                    <p class="modul-card-title">Metal Gear Solid</p>
                 </a>
             </div>
-            <div class="game">
+            <div class="game modul-card">
                 <a href="http://20.234.113.211:8085/Term%C3%A9kadatok/rocket-horizon" target="_blank">
-                    <img src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/0cac4c10-817e-4fde-9263-003e91f5147a/medium/img_G9760662.png" alt="Rocket Horizon">
-                    Rocket Horizon
+                    <img class="modul-card-img" src="http://20.234.113.211:8085/Portals/0/Hotcakes/Data/products/0cac4c10-817e-4fde-9263-003e91f5147a/medium/img_G9760662.png" alt="Rocket Horizon">
+                    <p class="modul-card-title">Rocket Horizon</p>
                 </a>
             </div>
         </div>
@@ -418,6 +537,7 @@
             const dropdown = document.getElementById(dropdownId);
             for (let item in data) {
                 let option = document.createElement("option");
+                option.classList.add('modul-option')
                 option.value = data[item];
                 option.text = item;
                 dropdown.appendChild(option);
